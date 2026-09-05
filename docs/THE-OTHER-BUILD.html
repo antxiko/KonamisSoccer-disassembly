@@ -1,0 +1,118 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The other build: Konami&#x27;s Football — Konami&#x27;s Soccer (Konami, 1985)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html">The game</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html">Findings</a><a href="IN-THE-EMULATOR.html">In the emulator</a><a href="THE-OTHER-BUILD.html" style=color:var(--tinta)>The other build</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/LA-OTRA-COMPILACION.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
+<h1 id="the-other-build-konami-s-football">The other build: Konami&#x27;s Football</h1>
+<p>The same cartridge also came out as <b>Konami&#x27;s Football</b>. Same year, same size, and <b>the same catalogue number, RC-732</b>. The question is what changes, and the answer fits in one figure: <b>one instruction out of 9,755</b>.</p>
+<pre><code>Konami&#x27;s Soccer      b9536809a1784afb2e49a43d80ba9c6c8c15cd31ecbd6c284e9bf62c6927dcd4
+Konami&#x27;s Football    1fee5ce4d4d5f48a92849eb7bed7ebb653f7e773fd4467824c27f54204b0fe7f</code></pre>
+<p><img src="imagenes/titulo_football.png" alt="Konami&#x27;s Football&#x27;s title screen"></p>
+<h2 id="the-byte-by-byte-diff-is-worth-nothing">The byte-by-byte diff is worth nothing</h2>
+<p>Compared byte by byte, the two cartridges differ in <b>28,586 bytes out of 32,768</b>, that is 87.2 %. That number says nothing: the second build is <b>shifted</b>. Football&#x27;s logo takes less room than Soccer&#x27;s, everything behind it moves, and from then on every <code>call</code> points somewhere else even though it calls exactly the same thing.</p>
+<p>Aligning the two ROMs, the shift changes only <b>four times</b> in 32 KB:</p>
+<table><tr><th>from</th><th>to</th><th>shift</th></tr><tr><td><code>0x4000</code></td><td><code>0x4D1C</code></td><td>0</td></tr><tr><td><code>0x4E1D</code></td><td><code>0x6DBC</code></td><td>−46</td></tr><tr><td><code>0x6DDE</code></td><td><code>0x73C9</code></td><td>−44</td></tr><tr><td><code>0x73CA</code></td><td><code>0x8599</code></td><td>−40</td></tr><tr><td><code>0x85A9</code></td><td><code>0xBFF3</code></td><td>−38</td></tr></table>
+<p>So Football starts 46 bytes shorter and gets 2, 4 and 2 back at three points. And <code>0xBFF3</code> lines up again because Konami&#x27;s mark is glued to the very end.</p>
+<h2 id="instruction-by-instruction">Instruction by instruction</h2>
+<p>With that map the two builds can be compared the way they have to be: by disassembling both and translating one&#x27;s addresses into the other&#x27;s space, so that a <code>call 04ef7h</code> in Football and a <code>call 04f25h</code> in Soccer look the same, which is what they are. <code>tools/coteja_builds.py</code> does it:</p>
+<pre><code>python3 tools/coteja_builds.py soccer.rom football.rom \
+        work/soccer.trace.json 0x4000
+
+9755 instrucciones cotejadas, 1 distintas (0.01 %)
+  0x4cdb  A: ld c,005h    B(0x4cdb): ld c,004h</code></pre>
+<p><b>That is the whole code difference between the two cartridges.</b> And it is on the title screen: <code>0x4CDB</code> loads into C the number of rows of the big logo, which <code>0x4CDD</code> walks stamping fourteen consecutive patterns per row. Soccer paints <b>five rows</b> of tiles and Football <b>four</b>.</p>
+<h2 id="and-in-the-data-four-things">And in the data, four things</h2>
+<p>Of the 125 declared data blocks, <b>97 are identical byte for byte</b>. Of the remaining 28, twenty-four are pointer tables —sub-scenes, patches, sounds— that change only because the addresses they point at have moved. Four real changes are left, and all four are the same change:</p>
+<table><tr><th>block</th><th>what it is</th><th>what changes</th></tr><tr><td><code>patrones_4d1c</code></td><td>the big title logo</td><td>262 of 280 bytes: it is a different drawing</td></tr><tr><td><code>patrones_6d8d</code></td><td>the pitch tiles</td><td>Football writes <b>104 bytes of VRAM instead of 96</b>: one tile more</td></tr><tr><td><code>color_739b</code></td><td>the colour of those tiles</td><td>7 of 120 bytes</td></tr><tr><td><code>mapa_del_campo</code></td><td>the pitch&#x27;s 1,840 tiles</td><td><b>7 tiles</b>, all on row 1, columns 41 to 48</td></tr></table>
+<p>Those seven tiles are <b>the advertising hoarding</b> that runs across the top of the pitch.</p>
+<p><img src="imagenes/campo_football.png" alt="Konami&#x27;s Football&#x27;s pitch"></p>
+<p>Compare it with <a href="THE-GAME.html">Soccer&#x27;s</a>: it is the same pitch, line for line, and the only thing that changes is what the hoarding says.</p>
+<h2 id="what-does-not-change">What does NOT change</h2>
+<ul><li>The header from <code>0x4000</code> to <code>0x4025</code> is <b>identical byte for byte</b>: same &quot;AB&quot;, same INIT at <code>0x4070</code> and the same Konami Game Master header at <code>0x4010</code> with its <code>0x07</code> and its <code>0x32</code>.</li><li><b>Konami&#x27;s hidden mark</b> too: the thirteen bytes at <code>0xBFF3</code> are the same, <code>BA 85 B5 8A 00 98 00 9F 94 89 0A 32 AA</code>. The katakana title the cartridge carries hidden inside <b>still reads サッカー</b>, Soccer, even though the label says Football.</li><li>And the game. The five difficulty tables, the aim, the offside, the player patches, the sound: the 97 identical blocks.</li></ul>
+<h2 id="checked-against-the-emulator">Checked against the emulator</h2>
+<p>Football&#x27;s pitch above is built by running the cartridge&#x27;s own steps in Python, and checked against an openMSX VRAM dump just like Soccer&#x27;s:</p>
+<pre><code>COLOUR 0    PATTERNS 0    SPR PATT 0
+MAP at 0xE600, 80x23:   2 of 1840   (the two goalkeepers)
+WINDOW of 23x32:       44 of 736    (42 are player patches)</code></pre>
+<p>Exactly the same figures as Soccer&#x27;s.</p>
+<footer><p><em>Konami's Soccer</em> was published by Konami for the MSX in 1985; its catalogue number is RC-732 and it is 32 KB. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>

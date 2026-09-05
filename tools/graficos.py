@@ -134,7 +134,7 @@ def carga_en(vram, rom, origen, destino, espejo=False):
             vram[i] = img[i]
 
 
-def paletas_de_camiseta(rom):
+def paletas_de_camiseta(rom, d=lambda x: x):
     """Las dos tablas de traduccion de color, con las camisetas de salida.
 
     Son dos pasos, y saltarse el segundo da colores equivocados:
@@ -152,10 +152,10 @@ def paletas_de_camiseta(rom):
     pero aqui se devuelve lo que el Z80 leeria.
     """
     ram = bytearray(0x30)                            # 0xE050..0xE07F
-    p = 0x5A5E - ORG
+    p = d(0x5A5E) - ORG
     ram[0:39] = rom[p:p + 39]                        # 0x5A4B, el `ldir`
     for base, quien in ((0x03, 0x24), (0x08, 0x25)):  # 0xE053/0xE074, 0xE058/0xE075
-        j = (0x5C20 - ORG) + ram[quien] * 3          # 0x5C11: por tres
+        j = (d(0x5C20) - ORG) + ram[quien] * 3          # 0x5C11: por tres
         ram[base:base + 3] = rom[j:j + 3]            # 0x5C1D, el `ldir` de tres
     return list(ram[0x01:0x11]), list(ram[0x06:0x16])
 
@@ -310,129 +310,150 @@ def escena_titulo(rom):
         0x4CB0  ld b,0e0h / pone_el_color_del_borde   fondo NEGRO
         0x4CB5  L_4668, que limpia la tabla de nombres
         0x4CB8  L_4A36, la paleta y la fuente
-        0x4CBB  los patrones del rotulo, 0x4D1C -> 0x2200
-        0x4CC4  y su color, 0x4E34 -> 0x0200
-        0x4CCD  el guion de 0x4E41, que pone el logotipo de la casa
-        0x4CD3  y el rotulo: cinco filas de catorce tiles CONSECUTIVOS desde
-                el 0x40, empezando en 0x3889 y con paso de fila 0x20
+        0x4CBB  los patrones del rotulo -> 0x2200
+        0x4CC4  y su color              -> 0x0200
+        0x4CCD  el guion que pone el "KONAMI'S" de encima
+        0x4CD3  y el rotulo: C filas de B tiles CONSECUTIVOS desde el 0x40,
+                empezando en 0x3889 y con paso de fila 0x20
+
+    NINGUNO de esos numeros esta escrito aqui: todos se LEEN del operando de su
+    instruccion. Y no es capricho. **Konami's Football es este mismo cartucho
+    recompilado**, y de sus 9.755 instrucciones solo UNA es distinta: el
+    `ld c,nn` de 0x4CDB, que en Soccer vale 5 y en Football 4. Ademas, como la
+    segunda compilacion esta corrida 46 bytes, dos de los bloques que esta
+    escena carga estan en otra direccion. Leyendo los operandos, la misma
+    funcion monta las dos portadas.
     """
+    def w(a):
+        return rom[a - ORG] | (rom[a - ORG + 1] << 8)
+
     usa_fondo(0)                                 # 0x4CB0: R7 = 0xE0
     v = vram_limpia()
     llena_plano(v, 0x3800, 0x300, 0x00)          # 0x4668
     monta_la_paleta_y_la_fuente(v, rom)          # 0x4CB8
-    carga(v, rom, 0x2200, 0x4D1C)                # 0x4CC1
-    carga(v, rom, 0x0200, 0x4E34)                # 0x4CCA
-    guion(v, rom, 0x4E41)                        # 0x4CD0
-    hl, a = 0x3889, 0x40                         # 0x4CD3
-    for _ in range(5):                           # 0x4CDB: C = 5 filas
+    carga(v, rom, w(0x4CBF), w(0x4CBC))          # 0x4CC1: patrones del rotulo
+    carga(v, rom, w(0x4CC8), w(0x4CC5))          # 0x4CCA: y su color
+    guion(v, rom, w(0x4CCE))                     # 0x4CD0: el "KONAMI'S"
+    hl = w(0x4CD4)                               # 0x4CD3: la esquina
+    a = rom[0x4CDA - ORG]                        # 0x4CD9: el primer tile
+    filas = rom[0x4CDC - ORG]                    # 0x4CDB: C
+    cols = rom[0x4CDE - ORG]                     # 0x4CDD: B
+    paso = w(0x4CD7)                             # 0x4CD6: DE, el salto de fila
+    for _ in range(filas):
         p = hl
-        for _ in range(14):                      # 0x4CDD: B = 14 columnas
+        for _ in range(cols):
             v[p & 0x3FFF] = a
             p += 1
             a = (a + 1) & 0xFF
-        hl += 0x20                               # 0x4CD6: DE = 0x20
+        hl += paso
     # 0x4CEC y 0x4CEF: "(c)KONAMI 1985", "PLAY SELECT" y "1PLAYER"; y como el
     # interprete deja DE detras del 0xFF, el segundo `call` de 0x4CF2 sigue
     # con el guion que va pegado, el del "2PLAYERS"
-    sigue = guion(v, rom, 0x494A)
+    sigue = guion(v, rom, w(0x4CED))
     guion(v, rom, sigue)
     return v
 
 
-def escena_campo(rom):
+def escena_campo(rom, d=lambda x: x):
     """Las diez tandas de 0x4279 y las cuatro de 0x5752, en su orden.
 
     Cada `call` de aqui abajo es uno de los de `carga_los_graficos_del_campo`
     (0x4279..0x4294) o de `monta_el_partido` (0x5752..0x5766), y lleva al
     lado la direccion de la rutina que hace lo mismo en el Z80. No se dibuja
     ni un pixel a mano: se corre el descompresor del cartucho.
+
+    `d` traduce una direccion de ESTA compilacion a la de otra. Hace falta para
+    Konami's Football, que es este mismo cartucho recompilado y lleva todo
+    corrido: -46 bytes desde 0x4E1D, -44 desde 0x6DDE, -40 desde 0x73CA y -38
+    desde 0x85A9. El mapa lo saca tools/coteja_builds.py alineando las dos ROM,
+    y con el la misma funcion monta los dos campos. Por defecto no traduce.
     """
     usa_fondo(0)                                     # 0x4242: R7 = 0x00
     v = vram_limpia()
-    p1, p2 = paletas_de_camiseta(rom)
+    p1, p2 = paletas_de_camiseta(rom, d)
 
     # 0x424B, monta_la_pantalla_de_datos: la fuente y el marcador de arriba
     monta_la_paleta_y_la_fuente(v, rom)              # 0x4A36
-    carga(v, rom, 0x2230, 0x5E69)                    # 0x5E32
-    carga(v, rom, 0x0230, 0x5EB2)
-    carga(v, rom, 0x2500, 0x4A6C)                    # la fuente, otra vez
+    carga(v, rom, 0x2230, d(0x5E69))                    # 0x5E32
+    carga(v, rom, 0x0230, d(0x5EB2))
+    carga(v, rom, 0x2500, d(0x4A6C))                    # la fuente, otra vez
     llena(v, 0x0500, 0x180, 0x4F)                    # y en azul sobre blanco
-    carga_directa(v, rom, 0x5F08)                    # siete sprites
+    carga_directa(v, rom, d(0x5F08))                    # siete sprites
     espeja_sprites(v, 0x1800, 0x18E0, 7)             # y otros siete, del reves
 
-    carga_directa(v, rom, 0x6D48)                    # L_6D18, tanda 1
-    carga_directa(v, rom, 0x6D75)
-    carga_en(v, rom, 0x6D65, 0x2250, espejo=True)
-    carga_en(v, rom, 0x6D77, 0x2288, espejo=True)
-    carga_directa(v, rom, 0x6D8D)
-    carga_directa(v, rom, 0x6DE0)
-    carga_directa(v, rom, 0x6DEA)
+    carga_directa(v, rom, d(0x6D48))                    # L_6D18, tanda 1
+    carga_directa(v, rom, d(0x6D75))
+    carga_en(v, rom, d(0x6D65), 0x2250, espejo=True)
+    carga_en(v, rom, d(0x6D77), 0x2288, espejo=True)
+    carga_directa(v, rom, d(0x6D8D))
+    carga_directa(v, rom, d(0x6DE0))
+    carga_directa(v, rom, d(0x6DEA))
 
-    carga_directa(v, rom, 0x6E25)                    # L_6E16, tanda 2
-    carga_en(v, rom, 0x6E27, 0x28E0, espejo=True)
+    carga_directa(v, rom, d(0x6E25))                    # L_6E16, tanda 2
+    carga_en(v, rom, d(0x6E27), 0x28E0, espejo=True)
 
-    carga_directa(v, rom, 0x6EC8)                    # L_6EB9, tanda 3
-    carga_en(v, rom, 0x6ECE, 0x30A8, espejo=True)
+    carga_directa(v, rom, d(0x6EC8))                    # L_6EB9, tanda 3
+    carga_en(v, rom, d(0x6ECE), 0x30A8, espejo=True)
 
-    carga(v, rom, 0x2808, 0x6F19, tercios=2)         # L_6F0E, tanda 4
+    carga(v, rom, 0x2808, d(0x6F19), tercios=2)         # L_6F0E, tanda 4
 
-    carga(v, rom, 0x2998, 0x7087, tercios=2)         # L_7071, tanda 5
-    carga(v, rom, 0x2A58, 0x7087, tercios=2, espejo=True)
+    carga(v, rom, 0x2998, d(0x7087), tercios=2)         # L_7071, tanda 5
+    carga(v, rom, 0x2A58, d(0x7087), tercios=2, espejo=True)
 
-    carga_directa(v, rom, 0x738A)                    # L_731F, tanda 6
-    carga_directa(v, rom, 0x7396)
-    carga_directa(v, rom, 0x736D)
-    carga_en(v, rom, 0x738C, 0x0250)
-    carga_en(v, rom, 0x7398, 0x0288)
-    carga_directa(v, rom, 0x739B)
-    carga_directa(v, rom, 0x73CC)
-    carga_recoloreada(v, rom, 0x0228, 0x7393, p1)    # 0x7352: la camiseta 1
-    carga_recoloreada(v, rom, 0x02E8, 0x7393, p2)    # 0x7361: y la 2
+    carga_directa(v, rom, d(0x738A))                    # L_731F, tanda 6
+    carga_directa(v, rom, d(0x7396))
+    carga_directa(v, rom, d(0x736D))
+    carga_en(v, rom, d(0x738C), 0x0250)
+    carga_en(v, rom, d(0x7398), 0x0288)
+    carga_directa(v, rom, d(0x739B))
+    carga_directa(v, rom, d(0x73CC))
+    carga_recoloreada(v, rom, 0x0228, d(0x7393), p1)    # 0x7352: la camiseta 1
+    carga_recoloreada(v, rom, 0x02E8, d(0x7393), p2)    # 0x7361: y la 2
 
-    carga_directa(v, rom, 0x73F2)                    # L_73E3, tanda 7
-    carga_en(v, rom, 0x73F4, 0x08E0)
+    carga_directa(v, rom, d(0x73F2))                    # L_73E3, tanda 7
+    carga_en(v, rom, d(0x73F4), 0x08E0)
 
-    carga_directa(v, rom, 0x7412)                    # L_7403, tanda 8
-    carga_en(v, rom, 0x7416, 0x10A8)
+    carga_directa(v, rom, d(0x7412))                    # L_7403, tanda 8
+    carga_en(v, rom, d(0x7416), 0x10A8)
 
-    carga(v, rom, 0x0808, 0x7424, tercios=2)         # L_7419, tanda 9
+    carga(v, rom, 0x0808, d(0x7424), tercios=2)         # L_7419, tanda 9
 
-    carga_recoloreada(v, rom, 0x0998, 0x74FE, p1, 2)  # L_74DC, tanda 10
-    carga_recoloreada(v, rom, 0x0A58, 0x74FE, p2, 2)
+    carga_recoloreada(v, rom, 0x0998, d(0x74FE), p1, 2)  # L_74DC, tanda 10
+    carga_recoloreada(v, rom, 0x0A58, d(0x74FE), p2, 2)
 
-    carga(v, rom, 0x2320, 0x6F55)                    # L_6F31, las fichas
-    carga(v, rom, 0x2590, 0x6F55)
-    carga(v, rom, 0x2458, 0x6F55, espejo=True)
-    carga(v, rom, 0x26C8, 0x6F55, espejo=True)
+    carga(v, rom, 0x2320, d(0x6F55))                    # L_6F31, las fichas
+    carga(v, rom, 0x2590, d(0x6F55))
+    carga(v, rom, 0x2458, d(0x6F55), espejo=True)
+    carga(v, rom, 0x26C8, d(0x6F55), espejo=True)
 
-    carga_recoloreada(v, rom, 0x0320, 0x745D, p1, 3)  # L_742D, su color
-    carga_recoloreada(v, rom, 0x0458, 0x745D, p1, 3)
-    carga_recoloreada(v, rom, 0x0590, 0x745D, p2, 3)
-    carga_recoloreada(v, rom, 0x06C8, 0x745D, p2, 3)
+    carga_recoloreada(v, rom, 0x0320, d(0x745D), p1, 3)  # L_742D, su color
+    carga_recoloreada(v, rom, 0x0458, d(0x745D), p1, 3)
+    carga_recoloreada(v, rom, 0x0590, d(0x745D), p2, 3)
+    carga_recoloreada(v, rom, 0x06C8, d(0x745D), p2, 3)
 
     # L_76BC: los sprites del partido no van derechos a la VRAM
-    banco = descomprime_a_la_ram(rom, 0x76F0)        # 0x76BF, a 0xE600
+    banco = descomprime_a_la_ram(rom, d(0x76F0))        # 0x76BF, a 0xE600
     for i in range(0x2E0):                           # 0x76C8, LDIRVM a 0x1800
         v[0x1800 + i] = banco[i]
     espeja_sprites(v, None, 0x1AE0, 0x17, ram=banco)  # 0x76D6, otros 23
-    carga_directa(v, rom, 0x78F6)                    # 0x76DC
+    carga_directa(v, rom, d(0x78F6))                    # 0x76DC
     return v
 
 
-def mapa_del_campo(rom):
+def mapa_del_campo(rom, d=lambda x: x):
     """L_8538: los 1840 bytes del mapa, descomprimidos a 0xE600.
 
     Son 80 columnas por 23 filas, y la pantalla solo ensena 32 de ancho: lo
     fija la aritmetica de `vuelca_el_campo` (0x5DD6), que saca 32 casillas
     con `outi` y salta 48 antes de la fila siguiente.
     """
-    m = descomprime_a_la_ram(rom, 0x853E)
+    m = descomprime_a_la_ram(rom, d(0x853E))
     if len(m) != 80 * 23:
         raise SystemExit("el mapa mide %d bytes, no %d" % (len(m), 80 * 23))
     return m
 
 
-def campo_entero(rom, ruta):
+def campo_entero(rom, ruta, d=lambda x: x):
     """El campo de 80x23 casillas, dibujado de una pieza.
 
     La ventana de la pantalla arranca en 0x3820, o sea la FILA 1 de la tabla
@@ -440,8 +461,8 @@ def campo_entero(rom, ruta):
     pinta con las tablas del tercio (N+1)//8, que es el que le tocaria en
     pantalla.
     """
-    v = escena_campo(rom)
-    m = mapa_del_campo(rom)
+    v = escena_campo(rom, d)
+    m = mapa_del_campo(rom, d)
     ancho, alto = 80 * 8, 23 * 8
     pix = [FONDO] * (ancho * alto)
     for f in range(23):

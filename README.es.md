@@ -11,6 +11,7 @@ Desensamblado completo y comentado del cartucho de MSX1 **Konami's Soccer**
 | Reensambla | **byte a byte**, al mismo sha256 |
 | Del listado comentado | **36,5 %** — 3.561 comentarios sobre 9.755 instrucciones |
 | Rutinas por debajo del listón del 10 % | **0** de 1.213 |
+| Instrucciones distintas de Konami's Football | **1** de 9.755 |
 | Imágenes cotejadas contra la VRAM del emulador | título **0** bytes distintos, campo **0** |
 
 ## Qué hay aquí
@@ -52,6 +53,10 @@ Ver [Empezar](https://antxiko.github.io/KonamisSoccer-disassembly/es/EMPEZAR.htm
   código al trazador.
 - **La marca oculta de Konami** en los trece últimos bytes, un hallazgo de
   **Manuel Pazos**.
+- Y **una instrucción de 9.755** es todo lo que separa este cartucho de
+  **Konami's Football**, el mismo RC-732 con otro nombre: el `ld c,nn` que dice
+  cuántas filas de tiles mide el rótulo del título. Ver
+  [La otra compilación](https://antxiko.github.io/KonamisSoccer-disassembly/es/LA-OTRA-COMPILACION.html).
 
 Todo, con la medida al lado de cada afirmación, en
 [Hallazgos](https://antxiko.github.io/KonamisSoccer-disassembly/es/HALLAZGOS.html).

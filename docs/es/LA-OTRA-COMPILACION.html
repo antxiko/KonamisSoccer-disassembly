@@ -1,0 +1,118 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La otra compilación: Konami&#x27;s Football — Konami&#x27;s Soccer (Konami, 1985)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Portada</a><a href="EMPEZAR.html">Empezar</a><a href="EL-JUEGO.html">El juego</a><a href="EL-CARTUCHO.html">El cartucho</a><a href="EL-CODIGO.html">El código</a><a href="HALLAZGOS.html">Hallazgos</a><a href="EN-EL-EMULADOR.html">En el emulador</a><a href="LA-OTRA-COMPILACION.html" style=color:var(--tinta)>La otra compilación</a><a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a><a href="../THE-OTHER-BUILD.html" style="margin-left:auto;color:var(--oro)">English</a></nav>
+<h1 id="la-otra-compilacion-konami-s-football">La otra compilación: Konami&#x27;s Football</h1>
+<p>El mismo cartucho salió también como <b>Konami&#x27;s Football</b>. Mismo año, mismo tamaño y <b>el mismo número de catálogo, RC-732</b>. La pregunta es qué cambia, y la respuesta se puede dar con un número: <b>una instrucción de 9.755</b>.</p>
+<pre><code>Konami&#x27;s Soccer      b9536809a1784afb2e49a43d80ba9c6c8c15cd31ecbd6c284e9bf62c6927dcd4
+Konami&#x27;s Football    1fee5ce4d4d5f48a92849eb7bed7ebb653f7e773fd4467824c27f54204b0fe7f</code></pre>
+<p><img src="../imagenes/titulo_football.png" alt="La pantalla de título de Konami&#x27;s Football"></p>
+<h2 id="el-diff-byte-a-byte-no-sirve-para-nada">El diff byte a byte no sirve para nada</h2>
+<p>Comparados byte a byte, los dos cartuchos se diferencian en <b>28.586 bytes de 32.768</b>, o sea el 87,2 %. Ese número no dice nada: la segunda compilación está <b>corrida</b>. El logotipo de Football ocupa menos que el de Soccer, todo lo que va detrás se desplaza, y a partir de ahí cada <code>call</code> apunta a otro sitio aunque llame exactamente a lo mismo.</p>
+<p>Alineando las dos ROM, el desplazamiento sólo cambia <b>cuatro veces</b> en 32 KB:</p>
+<table><tr><th>desde</th><th>hasta</th><th>desplazamiento</th></tr><tr><td><code>0x4000</code></td><td><code>0x4D1C</code></td><td>0</td></tr><tr><td><code>0x4E1D</code></td><td><code>0x6DBC</code></td><td>−46</td></tr><tr><td><code>0x6DDE</code></td><td><code>0x73C9</code></td><td>−44</td></tr><tr><td><code>0x73CA</code></td><td><code>0x8599</code></td><td>−40</td></tr><tr><td><code>0x85A9</code></td><td><code>0xBFF3</code></td><td>−38</td></tr></table>
+<p>O sea: Football arranca 46 bytes más corto y recupera 2, 4 y 2 en tres puntos. Y <code>0xBFF3</code> vuelve a coincidir porque la marca de Konami va pegada al final.</p>
+<h2 id="instruccion-a-instrucccion">Instrucción a instruccción</h2>
+<p>Con ese mapa se pueden comparar las dos compilaciones como hay que compararlas: desensamblando las dos y traduciendo las direcciones de una al espacio de la otra, de modo que un <code>call 04ef7h</code> de Football y un <code>call 04f25h</code> de Soccer se vean iguales, que es lo que son. Lo hace <code>tools/coteja_builds.py</code>:</p>
+<pre><code>python3 tools/coteja_builds.py soccer.rom football.rom \
+        work/soccer.trace.json 0x4000
+
+9755 instrucciones cotejadas, 1 distintas (0.01 %)
+  0x4cdb  A: ld c,005h    B(0x4cdb): ld c,004h</code></pre>
+<p><b>Esa es toda la diferencia de código entre los dos cartuchos.</b> Y está en la pantalla de título: <code>0x4CDB</code> carga en C el número de filas del rótulo grande, que <code>0x4CDD</code> recorre estampando catorce patrones consecutivos por fila. Soccer pinta <b>cinco filas</b> de tiles y Football <b>cuatro</b>.</p>
+<h2 id="y-en-los-datos-cuatro-cosas">Y en los datos, cuatro cosas</h2>
+<p>De los 125 bloques de datos declarados, <b>97 son idénticos byte a byte</b>. De los 28 restantes, veinticuatro son tablas de punteros —las de subescenas, las de parches, las de sonidos— que cambian sólo porque las direcciones a las que apuntan se han movido. Quedan cuatro cambios de verdad, y los cuatro son el mismo cambio:</p>
+<table><tr><th>bloque</th><th>qué es</th><th>qué cambia</th></tr><tr><td><code>patrones_4d1c</code></td><td>el logotipo grande del título</td><td>262 de 280 bytes: es otro dibujo</td></tr><tr><td><code>patrones_6d8d</code></td><td>los tiles del campo</td><td>Football escribe <b>104 bytes de VRAM en vez de 96</b>: un tile más</td></tr><tr><td><code>color_739b</code></td><td>el color de esos tiles</td><td>7 de 120 bytes</td></tr><tr><td><code>mapa_del_campo</code></td><td>las 1.840 casillas del campo</td><td><b>7 casillas</b>, todas en la fila 1, columnas 41 a 48</td></tr></table>
+<p>Esas siete casillas son <b>la valla publicitaria</b> que cruza el campo por arriba.</p>
+<p><img src="../imagenes/campo_football.png" alt="El campo de Konami&#x27;s Football"></p>
+<p>Compárese con <a href="EL-JUEGO.html">el de Soccer</a>: es el mismo campo, línea por línea, y lo único que cambia es lo que pone la valla.</p>
+<h2 id="lo-que-no-cambia">Lo que NO cambia</h2>
+<ul><li>La cabecera de <code>0x4000</code> a <code>0x4025</code> es <b>idéntica byte a byte</b>: mismo &quot;AB&quot;, mismo INIT en <code>0x4070</code> y la misma cabecera del Konami Game Master en <code>0x4010</code> con su <code>0x07</code> y su <code>0x32</code>.</li><li>La <b>marca oculta de Konami</b> también: los trece bytes de <code>0xBFF3</code> son los mismos, <code>BA 85 B5 8A 00 98 00 9F 94 89 0A 32 AA</code>. El título en katakana que el cartucho lleva escondido dentro <b>sigue diciendo サッカー</b>, Soccer, aunque la etiqueta diga Football.</li><li>Y el juego. Las cinco tablas de dificultad, la puntería, el fuera de juego, los parches de los jugadores, el sonido: los 97 bloques idénticos.</li></ul>
+<h2 id="comprobado-contra-el-emulador">Comprobado contra el emulador</h2>
+<p>El campo de Football de arriba está montado ejecutando en Python los pasos del propio cartucho, y cotejado contra un volcado de VRAM de openMSX igual que el de Soccer:</p>
+<pre><code>COLOR 0    PATRONES 0    SPR PATR 0
+MAPA de 0xE600, 80x23:  2 de 1840   (los dos porteros)
+VENTANA de 23x32:      44 de 736    (42 son parches de jugador)</code></pre>
+<p>Las mismas cifras, exactamente, que las de Soccer.</p>
+<footer><p><em>Konami's Soccer</em> lo publico Konami para MSX en 1985; su numero de catalogo es RC-732 y son 32 KB. Todos los derechos sobre el juego siguen siendo de sus titulares. Este trabajo es de preservacion, estudio y documentacion, y la imagen del cartucho no se distribuye.</p></footer></div>

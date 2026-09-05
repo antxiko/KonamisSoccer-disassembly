@@ -11,6 +11,7 @@ A complete, commented disassembly of the MSX1 cartridge **Konami's Soccer**
 | Reassembles | **byte for byte**, to the same sha256 |
 | Listing commented | **36.5%** — 3,561 comments over 9,755 instructions |
 | Routines below the 10% bar | **0** of 1,213 |
+| Instructions differing from Konami's Football | **1** of 9,755 |
 | Pictures checked against the emulator's VRAM | title **0** bytes different, pitch **0** |
 
 ## What is in here
@@ -51,6 +52,10 @@ is the ROM byte for byte, then runs the sanity checks and the tests. See
   from the tracer.
 - **Konami's hidden mark** in the last thirteen bytes, a finding of
   **Manuel Pazos**.
+- And **one instruction out of 9,755** is all that separates this cartridge
+  from **Konami's Football**, the same RC-732 under another name: the `ld c,nn`
+  that says how many rows of tiles the title logo is tall. See
+  [The other build](https://antxiko.github.io/KonamisSoccer-disassembly/THE-OTHER-BUILD.html).
 
 All of it, with the measurement next to each claim, in
 [Findings](https://antxiko.github.io/KonamisSoccer-disassembly/FINDINGS.html).

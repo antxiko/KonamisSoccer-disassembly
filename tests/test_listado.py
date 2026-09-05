@@ -109,6 +109,25 @@ def rom_del_listado():
     return bytes(rom)
 
 
+def rom_completa():
+    """La ROM de verdad, si esta puesta en la raiz; si no, None.
+
+    Casi todos los tests corren sobre rom_del_listado(), que rehace los bytes
+    de DATOS leyendo las filas `defb` del .asm. Con eso basta para el
+    descompresor, los rotulos y las tablas. Pero el montaje de la pantalla de
+    titulo lee los operandos de sus propias instrucciones -para poder montar
+    tambien la portada de Konami's Football, la otra compilacion-, y esos son
+    bytes de CODIGO, que el listado no trae como datos.
+    """
+    p = os.path.join(RAIZ, "soccer.rom")
+    if os.path.exists(p):
+        with open(p, "rb") as f:
+            d = f.read()
+        if len(d) == FIN - ORG:
+            return d
+    return None
+
+
 def bloques_declarados():
     """Las directivas D del .notes: {nombre: (ini, fin, explicacion)}."""
     d = {}
@@ -556,6 +575,44 @@ class TestTablas(unittest.TestCase):
         self.assertEqual([self.b(otra + i) for i in range(3)], p1[2:5])
         self.assertEqual([self.b(otra + 3 + i) for i in range(3)], p2[2:5])
 
+    def test_el_rotulo_del_titulo_mide_cinco_filas_de_catorce(self):
+        """Los tres numeros del bucle de 0x4CD3, leidos del propio listado.
+
+        Importan porque son la UNICA diferencia de codigo con Konami's
+        Football, la otra compilacion de este mismo RC-732: de sus 9.755
+        instrucciones solo cambia el `ld c,nn` de 0x4CDB, que alli vale 4. El
+        rotulo grande no es una imagen guardada, son C filas de B patrones
+        CONSECUTIVOS desde el 0x40.
+
+        Se lee del .asm y no de rom_del_listado(), que solo rehace los bytes de
+        DATOS: estas cinco son instrucciones.
+        """
+        instr = {}
+        for ln in lee(ASM).splitlines():
+            m = re.match(r"^	(.*?)\s*;([0-9a-f]{4})", ln)
+            if m:
+                instr[int(m.group(2), 16)] = m.group(1).strip()
+        self.assertEqual(instr.get(0x4CD3), "ld hl,03889h", "no empieza en la fila 4")
+        self.assertEqual(instr.get(0x4CD6), "ld de,00020h", "el salto de fila no es 32")
+        self.assertEqual(instr.get(0x4CD9), "ld a,040h", "no arranca en el tile 0x40")
+        self.assertEqual(instr.get(0x4CDB), "ld c,005h", "el rotulo no mide cinco filas")
+        self.assertEqual(instr.get(0x4CDD), "ld b,00eh", "las filas no son de catorce")
+
+    def test_los_setenta_tiles_del_rotulo_caben_en_su_bloque(self):
+        """Cinco por catorce son 70 tiles, del 0x40 al 0x85.
+
+        El bloque de patrones que los trae, 0x4D1C, da 592 bytes de VRAM en
+        0x2200, que son 74 tiles: los 70 del rotulo y cuatro mas.
+        """
+        import rle
+        self.assertEqual(5 * 14, 70)
+        ini, _, _ = self.d["patrones_4d1c"]
+        r = rle.descomprime(self.rom, ORG, ini, 0x2200)
+        self.assertIsNotNone(r, "el bloque del rotulo no cierra")
+        n = sum(1 for x in r[2] if x)
+        self.assertEqual(n, 592, "no da los 592 bytes de patron")
+        self.assertEqual(n // 8, 74, "no son 74 tiles")
+
     def test_el_despachador_disfrazado_tiene_cinco_entradas(self):
         """0xB2DC: cinco palabras, y la sexta ya se sale del cartucho.
 
@@ -617,12 +674,14 @@ class TestGraficos(unittest.TestCase):
         self.assertEqual(vacios, set(), "hay tiles del campo sin cargar")
 
     def test_el_logotipo_ocupa_siete_filas(self):
+        if rom_completa() is None:
+            self.skipTest("hace falta el cartucho: escena_titulo lee codigo")
         """"KONAMI'S" asoma por arriba con dos tiles en la fila 2.
 
         Recortarlo desde la fila 3 se comia el apostrofe y el rotulo decia
         "KONAMIS". El recorte tiene que empezar en la 2.
         """
-        v = self.g.escena_titulo(self.rom)
+        v = self.g.escena_titulo(rom_completa())
         def fila_llena(f):
             return any(v[0x3800 + f * 32 + c] for c in range(32))
         self.assertTrue(fila_llena(2), "la fila 2 esta vacia")

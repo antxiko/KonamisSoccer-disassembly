@@ -16,6 +16,29 @@ herramientas de tools/, y no copiadas de ningun otro proyecto.
 
 HALLAZGOS = {
     "es": [
+        ("Una instruccion de 9.755 separa este cartucho de Konami's Football",
+         "<p>El mismo juego salio tambien como <b>Konami's Football</b>, con el "
+         "mismo numero de catalogo RC-732. Comparados byte a byte se "
+         "diferencian en <b>28.586 de los 32.768</b>, o sea el 87 %, y ese "
+         "numero no vale para nada: la segunda compilacion esta CORRIDA. El "
+         "logotipo de Football ocupa menos, todo lo que va detras se desplaza "
+         "y cada <code>call</code> apunta a otro sitio aunque llame a lo "
+         "mismo.</p>"
+         "<p>Alineando las dos ROM el desplazamiento solo cambia <b>cuatro "
+         "veces</b> en 32 KB -de 0 a -46, -44, -40 y -38-, y con ese mapa se "
+         "pueden desensamblar las dos y traducir las direcciones de una al "
+         "espacio de la otra. Entonces sale el numero de verdad: <b>de 9.755 "
+         "instrucciones, UNA es distinta</b>. El <code>ld c,005h</code> de "
+         "<code>0x4CDB</code>, que en Football vale 4: las filas de tiles que "
+         "mide el rotulo del titulo.</p>"
+         "<p>En los datos, <b>97 de los 125 bloques son identicos byte a "
+         "byte</b>. De los otros veintiocho, veinticuatro son tablas de "
+         "punteros movidas por la relocalizacion, y los cuatro que quedan son "
+         "el mismo cambio: el logotipo, un tile mas en el juego del campo, su "
+         "color y <b>siete casillas del mapa</b> -las de la valla "
+         "publicitaria-. Hasta la marca oculta de Konami es la misma: el "
+         "titulo en katakana de dentro <b>sigue diciendo サッカー</b>.</p>"),
+
         ("Se pita el fuera de juego",
          "<p>Un cartucho de 32 KB de 1985, y lleva la regla dentro. "
          "<code>0xB667</code> corre en el momento del pase, y pide tres cosas "
@@ -133,6 +156,27 @@ HALLAZGOS = {
     ],
 
     "en": [
+        ("One instruction out of 9,755 separates this cartridge from Konami's Football",
+         "<p>The same game also came out as <b>Konami's Football</b>, with the "
+         "same RC-732 catalogue number. Compared byte by byte they differ in "
+         "<b>28,586 of the 32,768</b>, that is 87 %, and that number is worth "
+         "nothing: the second build is SHIFTED. Football's logo takes less "
+         "room, everything behind it moves and every <code>call</code> points "
+         "somewhere else even though it calls the same thing.</p>"
+         "<p>Aligning the two ROMs, the shift changes only <b>four times</b> "
+         "in 32 KB -from 0 to -46, -44, -40 and -38- and with that map both "
+         "can be disassembled and one's addresses translated into the other's "
+         "space. Then the real number comes out: <b>of 9,755 instructions, ONE "
+         "differs</b>. The <code>ld c,005h</code> at <code>0x4CDB</code>, which "
+         "in Football is 4: the rows of tiles the title logo is tall.</p>"
+         "<p>In the data, <b>97 of the 125 blocks are identical byte for "
+         "byte</b>. Of the other twenty-eight, twenty-four are pointer tables "
+         "moved by the relocation, and the four that remain are the same "
+         "change: the logo, one more tile in the pitch's set, its colour and "
+         "<b>seven tiles of the map</b> -the advertising hoarding-. Even "
+         "Konami's hidden mark is the same: the katakana title inside <b>still "
+         "reads サッカー</b>.</p>"),
+
         ("It calls offside",
          "<p>A 32 KB cartridge from 1985, and the rule is in there. "
          "<code>0xB667</code> runs the moment the pass is made, and it asks "
@@ -287,6 +331,18 @@ GALERIA = [
      "of fourteen CONSECUTIVE patterns that 0x4CD3 stamps from 0x40 on. "
      "Checked against the emulator's VRAM: zero bytes different across all "
      "three tables."),
+
+    ("titulo_football.png",
+     "La misma pantalla, montada desde la OTRA compilacion: Konami's Football, "
+     "el mismo cartucho RC-732 con otro nombre. De sus 9.755 instrucciones "
+     "solo una es distinta a las de Soccer, y es justo la que dice cuantas "
+     "filas de tiles mide este rotulo: cinco en Soccer, cuatro aqui. Cotejada "
+     "contra la VRAM del emulador: cero bytes distintos en las tres tablas.",
+     "The same screen, built from the OTHER build: Konami's Football, the same "
+     "RC-732 cartridge under another name. Of its 9,755 instructions only one "
+     "differs from Soccer's, and it is exactly the one saying how many rows of "
+     "tiles this logo is tall: five in Soccer, four here. Checked against the "
+     "emulator's VRAM: zero bytes different across all three tables."),
 
     ("fuente.png",
      "Los 44 tiles de la fuente, del 0x10 al 0x3B, puestos en fila para "

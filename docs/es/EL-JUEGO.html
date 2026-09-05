@@ -1,0 +1,111 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>El juego — Konami&#x27;s Soccer (Konami, 1985)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Portada</a><a href="EMPEZAR.html">Empezar</a><a href="EL-JUEGO.html" style=color:var(--tinta)>El juego</a><a href="EL-CARTUCHO.html">El cartucho</a><a href="EL-CODIGO.html">El código</a><a href="HALLAZGOS.html">Hallazgos</a><a href="EN-EL-EMULADOR.html">En el emulador</a><a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a><a href="../THE-GAME.html" style="margin-left:auto;color:var(--oro)">English</a></nav>
+<h1 id="el-juego">El juego</h1>
+<p><em>Konami&#x27;s Soccer</em> salió en 1985 para MSX, en cartucho de 32 KB con el número de catálogo <b>RC-732</b>. Un partido de fútbol de seis contra seis más los porteros, con reloj, prórroga por penaltis y editor de nombres para los dos equipos.</p>
+<p><img src="../imagenes/campo.png" alt="El campo entero, dibujado desde la ROM"></p>
+<h2 id="el-campo-no-cabe-en-la-pantalla">El campo no cabe en la pantalla</h2>
+<p>Un MSX1 enseña 32 casillas de ancho. El campo de este juego mide <b>80</b>, y vive descomprimido en la RAM, en <code>0xE600</code>: 80 columnas por 23 filas, 1.840 casillas. La pantalla es una ventana de 32 columnas que corre por él, y por dónde va lo dice <code>(0xE2C1)</code>, que arranca en la 24.</p>
+<p>La medida no está escrita en ninguna parte del cartucho: la fija la aritmética de <code>vuelca_el_campo</code> (<code>0x5DD6</code>), que saca 32 casillas con <code>outi</code> y <b>salta 48</b> antes de la fila siguiente. 32 más 48 son 80.</p>
+<p>En píxeles el campo mide 640 de ancho. Las bandas están en las alturas <code>0x1D</code> y <code>0xB3</code> —150 píxeles entre ellas—, los fondos en el píxel 30 y el 601, los palos ocupan <code>0x49</code>-<code>0x4A</code> y <code>0x81</code>-<code>0x82</code> —dos píxeles de grosor cada uno— y entre ellos quedan <b>54 píxeles de portería</b>. La red está en el píxel <code>0x12</code> y en el <code>0x267</code>: ahí se clava la pelota del gol, con su sonido propio.</p>
+<h2 id="los-jugadores">Los jugadores</h2>
+<p><img src="../imagenes/fichas.png" alt="Las 51 poses de los jugadores"></p>
+<p>Los doce jugadores de campo no se dibujan igual. Un bando se <b>estampa sobre el mapa</b>, como parches de tres por tres casillas; el otro sale con <b>cinco sprites por jugador</b>. En <a href="HALLAZGOS.html">Hallazgos</a> está el porqué y el orden exacto del cuadro.</p>
+<p>Las poses salen de un árbol de dos niveles: <code>(ix+0x0C)</code> elige el grupo y <code>(ix+0x0D)</code> el dibujo dentro del grupo. Son <b>26 poses para un bando y 25 para el otro</b>, y arriba están todas.</p>
+<p>Los dos porteros no son fichas como los demás: son dos parches con su propia tabla y su propio hueco de fondo, que se estampan detrás de los seis.</p>
+<h2 id="las-reglas-que-el-cartucho-lleva-dentro">Las reglas que el cartucho lleva dentro</h2>
+<ul><li><b>El fuera de juego se pita.</b> Con dos jugadores, siempre; contra la máquina, sólo del <b>nivel 3 en adelante</b>.</li><li><b>El robo depende del ángulo.</b> Si el que entra y el que lleva la pelota no van encarados, en vez de robo hay choque: los dos al suelo.</li><li><b>El larguero devuelve media velocidad</b>, y el poste sólo cambia el signo del desvío, con su sonido.</li><li><b>Empate al final: penaltis</b>, y su tanda tiene sus propios pasos, su propio portero y su propia puntería.</li></ul>
+<h2 id="los-cinco-niveles">Los cinco niveles</h2>
+<p>No hay una inteligencia distinta por nivel: hay <b>bandas muertas y permisos</b>.</p>
+<table><tr><th>nivel</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr><tr><td>altura a la que el portero deja de reaccionar</td><td>32</td><td><b>44</b></td><td>24</td><td>20</td><td>16</td></tr><tr><td>cuadros que tarda en reaccionar la máquina</td><td>16</td><td>14</td><td>12</td><td>10</td><td>8</td></tr><tr><td>paso de la máquina con la pelota</td><td>0x0E0</td><td>0x0F0</td><td><b>0x100</b></td><td>0x110</td><td>0x120</td></tr><tr><td>paso de la máquina suelto</td><td>0x130</td><td>0x140</td><td><b>0x150</b></td><td>0x160</td><td>0x170</td></tr></table>
+<p>El bando del humano reacciona <b>siempre en 8 cuadros</b>, así que la máquina no llega a ganarle nunca: en el nivel 5 lo iguala. Y el <b>nivel 3 es el nivel justo</b>: es donde el paso de la máquina vale exactamente lo mismo que el del humano —<code>0x100</code> con la pelota y <code>0x150</code> suelto, los dos valores fijos que <code>0x5721</code> le da al bando 0—. Por debajo del 3 la máquina anda más despacio que tú; por encima, más deprisa.</p>
+<p>Lo raro de la tabla es el portero del <b>nivel 2</b>, que con 44 es el más pasivo de los cinco, más que el del nivel 1. Del 3 al 5 la progresión baja limpia.</p>
+<p>Y hay cuatro cosas que la máquina sólo hace a partir de cierto nivel:</p>
+<table><tr><th>lo que hace</th><th>desde el nivel</th></tr><tr><td>apuntar a donde va a estar el objetivo, y no a donde está (<code>0x9260</code>)</td><td>4</td></tr><tr><td>la finta en diagonal (<code>0xB12C</code>)</td><td>3</td></tr><tr><td>despejar tras un tiro (<code>0xB19D</code>)</td><td>4</td></tr><tr><td>corregir a la esquina contraria a la que va el portero (<code>0xB266</code>)</td><td>4</td></tr><tr><td>pitar el fuera de juego (<code>0xB671</code>)</td><td>3</td></tr></table>
+<p>En el nivel 1, además, la mitad de las pasadas ni siquiera esquiva (<code>0xB0D4</code>).</p>
+<h2 id="el-menu">El menú</h2>
+<p><img src="../imagenes/titulo.png" alt="La pantalla de título y su menú"></p>
+<p>Se eligen uno o dos jugadores, el color de camiseta de cada equipo —ocho juegos de tres tonos, y el menú no deja que coincidan—, el nivel y la duración de la parte. Los nombres de los equipos se editan letra a letra, y de fábrica son <b>EAGLES</b> y <b>STONES</b>.</p>
+<footer><p><em>Konami's Soccer</em> lo publico Konami para MSX en 1985; su numero de catalogo es RC-732 y son 32 KB. Todos los derechos sobre el juego siguen siendo de sus titulares. Este trabajo es de preservacion, estudio y documentacion, y la imagen del cartucho no se distribuye.</p></footer></div>

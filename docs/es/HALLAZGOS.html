@@ -1,0 +1,135 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hallazgos — Konami&#x27;s Soccer (Konami, 1985)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Portada</a><a href="EMPEZAR.html">Empezar</a><a href="EL-JUEGO.html">El juego</a><a href="EL-CARTUCHO.html">El cartucho</a><a href="EL-CODIGO.html">El código</a><a href="HALLAZGOS.html" style=color:var(--tinta)>Hallazgos</a><a href="EN-EL-EMULADOR.html">En el emulador</a><a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a><a href="../FINDINGS.html" style="margin-left:auto;color:var(--oro)">English</a></nav>
+<h1 id="hallazgos">Hallazgos</h1>
+<p>Lo que apareció al desmontarlo. Cada cosa con la dirección donde se ve.</p>
+<h2 id="el-fuera-de-juego-con-sus-tres-condiciones-y-una-excepcion">El fuera de juego, con sus tres condiciones y una excepción</h2>
+<p>Un cartucho de 32 KB de 1985 lleva la regla dentro. <code>0xB667</code> corre en el momento del pase y pide tres cosas a la vez:</p>
+<ol><li>que la pelota vaya hacia la portería contraria —el signo del byte alto de <code>(0xE2A8)</code>—;</li><li>que el que la recibe esté en la mitad de campo rival: pasado el píxel <code>0x140</code> de los 640 que mide el campo, o antes de él según el bando;</li><li>que esté por delante de <b>los seis</b> rivales, y se recorren uno a uno con un margen de ocho píxeles.</li></ol>
+<p>El árbitro no pita ahí. <code>0xB6F2</code> espera a que la pelota caiga —<code>(0xE2AB)</code>, su velocidad vertical, a cero— y entonces mira <code>(0xE546)</code>: <b>si por el camino rebotó en alguien, la falta se anula</b>. Sólo si el pase llegó y se controló suena el <code>0x25</code> y sale el rótulo OFFSIDE.</p>
+<p>Y hay una condición más: con dos jugadores se pita <b>siempre</b>; con uno solo, <b>sólo del nivel 3 en adelante</b> (<code>cp 003h</code> en <code>0xB671</code>). En los niveles 1 y 2 la regla no existe.</p>
+<p>El saque de la falta va en tres subescenas: agotar el rótulo —<code>0x60</code> cuadros, casi dos segundos—, esperar el botón, y veinte cuadros andando. Con un detalle bonito: <b>cuando el que saca es la máquina, la espera se acorta a la mitad</b> —<code>0x40</code> cuadros en vez de <code>0x80</code>—, porque nadie va a pulsar nada.</p>
+<h2 id="seis-jugadores-son-casillas-y-seis-son-sprites">Seis jugadores son casillas y seis son sprites</h2>
+<p>Un MSX1 sólo saca cuatro sprites por línea. Con doce jugadores y dos porteros no hay manera, así que el cartucho parte el problema y dibuja <b>cada bando de una manera distinta</b>. Está en el orden del cuadro, <code>0x5882</code>-<code>0x5892</code>:</p>
+<ol><li><code>guarda_el_fondo_del_bando</code> apunta las 3x3 casillas que va a tapar cada jugador;</li><li><code>estampa_el_bando_en_el_mapa</code> estampa los seis parches <b>sobre el mapa</b>, que vive en la RAM;</li><li><code>pon_el_bando_en_sprites</code> saca al otro bando con cinco sprites por jugador;</li><li><code>vuelca_el_campo</code> tira el mapa entero a la VRAM;</li><li><code>devuelve_el_fondo_al_mapa</code> vuelve a poner el césped que taparon.</li></ol>
+<p>Por eso el mapa de la RAM, mirado en el emulador en cualquier otro momento, está <b>limpio</b>: sus 1.840 casillas coinciden con las que salen de descomprimir <code>0x853E</code>, y las dos únicas que bailan son los dos porteros.</p>
+<p>Y el bando de los sprites tiene sus propios dos trucos, los dos en <code>sube_los_sprites</code> (<code>0x472B</code>):</p>
+<ul><li><b>El jugador que llevas nunca desaparece.</b> Antes de subir la lista se intercambian los dieciséis bytes de su grupo con los del primero, así que queda delante de todos y gana siempre la prioridad del VDP.</li><li><b>Los demás parpadean en vez de desaparecer.</b> El bit 0 del contador de cuadros parte los veinte sprites del medio en dos: en los cuadros pares suben en orden, y en los impares suben primero los ocho últimos y detrás los doce primeros. El orden se da la vuelta cada cuadro, y el quinto de una línea deja de ser siempre el mismo.</li></ul>
+<h2 id="la-punteria-no-se-calcula-se-consulta">La puntería no se calcula: se consulta</h2>
+<p>El Z80 no multiplica ni divide, y hay que decidir con qué fuerza sale un pase para que caiga donde se quiere. <code>0x92E2</code> lo resuelve sin calcular nada.</p>
+<p>Se miden las dos distancias al objetivo y se parten en escalones de dieciséis —quedarse con el nibble alto—: sale un número de <b>0 a 15</b> para el ancho y otro de <b>0 a 11</b> para el alto. Con esos dos se entra en dos tablas de dos niveles al final del cartucho: la de <code>0xBF0F</code> da el empuje vertical y la de <code>0xBD6F</code> las dos componentes del suelo.</p>
+<p>Encima quedan dos correcciones. En el saque de banda el golpe se ablanda a <b>tres cuartos</b> —o a la mitad si el objetivo está a menos de tres escalones en las dos direcciones—, y en el saque de centro el empuje vertical y la gravedad se <b>doblan</b>.</p>
+<h2 id="un-bloque-comprimido-dos-camisetas">Un bloque comprimido, dos camisetas</h2>
+<p>Los dos equipos comparten los mismos dibujos, y lo que cambia es la tabla de COLOR. La escribe el mismo descompresor pasando cada byte por <code>0x4846</code>, que parte el byte en sus dos nibbles —la tinta arriba, el fondo abajo—, mete cada uno en una paleta de cinco entradas y los vuelve a juntar. A dónde apunta la paleta lo dice <code>(0xE52A)</code>.</p>
+<p><code>0x6F31</code> deja cuatro volcados de patrón en <code>0x2320</code>, <code>0x2458</code>, <code>0x2590</code> y <code>0x26C8</code> —dos derechos y dos espejados— y <code>0x742D</code> los pinta: los dos primeros con la paleta de <code>0xE051</code> y los dos últimos con la de <code>0xE056</code>.</p>
+<p>Las paletas se arman en <b>dos pasos</b>. <code>0x5A45</code> copia 39 bytes de fábrica a <code>0xE050</code>, y después <code>0x5C02</code> machaca las entradas 2, 3 y 4 de cada una con el juego de tres tonos elegido en el menú. Montando la pantalla sin ese segundo paso, la tabla de COLOR sale distinta en <b>4.092 de sus 6.144 bytes</b>.</p>
+<h2 id="un-jp-bc-escrito-a-mano">Un <code>jp (bc)</code> escrito a mano</h2>
+<p>El Z80 tiene <code>jp (hl)</code>, pero no <code>jp (bc)</code>. En <code>0xB2DA</code> el cartucho lo escribe a mano: apila BC y hace <code>ret</code>. Para cualquier trazador eso es el final de una rutina, y detrás había <b>283 bytes</b> que nadie alcanzaba, con su tabla de cinco entradas en <code>0xB2DC</code>.</p>
+<p>Lo que fija la cuenta en cinco y no en seis es que la sexta palabra ya cae fuera del cartucho. Es el <b>único</b> <code>push bc / ret</code> de los 32 KB.</p>
+<h2 id="dos-marcadores-comparados-con-una-sola-resta">Dos marcadores comparados con una sola resta</h2>
+<p>Al final del partido hay que saber si hubo penaltis, o sea si los dos equipos acabaron empatados. Cada marcador son dos bytes: la cifra en BCD y el acarreo, y comparar dos parejas pide dos restas.</p>
+<p><code>0xB903</code> hace una. Arma <b>dos parejas cruzadas</b> —una cifra baja de cada equipo con un acarreo de cada equipo— y las resta con un solo <code>sbc hl,bc</code> de 16 bits. El resultado es cero exactamente cuando coinciden las dos comparaciones a la vez.</p>
+<h2 id="la-entrada-que-no-sale-acaba-en-choque">La entrada que no sale acaba en choque</h2>
+<p>Robar la pelota depende del ángulo. <code>0xABCA</code> compara el rumbo del que entra con el del que la lleva, y si coinciden —o van a cinco de distancia— el robo sale con su pitido. Si no, chocan.</p>
+<p>Al que la llevaba le caen <b>16 cuadros</b> quieto; al que entró se le redondea el rumbo a la diagonal siguiente, se le pone el dibujo 4 —por el suelo— y <b>resbala dos veces, ocho píxeles cada una y ocho cuadros entre ellas</b>, con la pelota siguiéndole a los pies. Al levantarse, la lleva él.</p>
+<p>Mientras dura, la física de la pelota <b>no corre</b>: las entradas 6 y 7 de la tabla de <code>0x8C70</code> —el choque y el fuera de juego— son un <code>ret</code> pelado.</p>
+<h2 id="nadie-corre-en-linea-recta-hacia-la-pelota">Nadie corre en línea recta hacia la pelota</h2>
+<p><code>0xB52A</code> decide hacia dónde mira cada ficha que no lleva un mando. Compara su posición con la de la pelota, junta los dos bits que salen y con eso indexa la tabla de <code>0xB578</code>. Los cuatro índices que alcanza dan <b>las cuatro diagonales</b>: 2, 4, 8 y 6. Las dos primeras entradas de la tabla —el 1 y el 5, derecha e izquierda— no las lee nadie.</p>
+<p>Y hay un temblor encima. Cada ficha lleva un contador propio en su <code>+0x1B</code>, y las dos instrucciones de <code>0xB55C</code> son las únicas de los 32 KB que lo tocan. <b>De cada 64 cuentas, en nueve la ficha se olvida de la pelota y mira a la portería contraria.</b> Como el contador sólo baja cuando a la ficha le toca turno —y no le toca si está ocupada o si la lleva un mando—, los seis se desincronizan solos y no se mueven como un banco de peces.</p>
+<h2 id="los-diez-tipos-de-saque-y-los-puestos">Los diez tipos de saque, y los puestos</h2>
+<p><code>(0xE533)</code> guarda qué saque hay en marcha, y los valores van del 1 al 10:</p>
+<table><tr><th></th><th>arriba</th><th>abajo</th></tr><tr><td>banda</td><td>1</td><td>2</td></tr><tr><td>esquina izquierda</td><td>3</td><td>4</td></tr><tr><td>esquina derecha</td><td>5</td><td>6</td></tr><tr><td>puerta izquierda</td><td>7</td><td>8</td></tr><tr><td>puerta derecha</td><td>9</td><td>10</td></tr></table>
+<p>Quién lo saca sale de la lista de puestos de <code>(0xE410)</code>. Los saques sólo usan seis códigos: el 3, el 4 y el 5 del primer bando y el 6, el 7 y el 8 del segundo, y son <b>arriba, en medio y abajo</b>. La esquina de arriba la saca el 3 o el 6, la de abajo el 5 o el 8, y el saque de puerta el 4 o el 7. El saque de la falta por fuera de juego elige con la misma regla, por la franja de campo en que se pitó.</p>
+<h2 id="los-dos-fondos-escritos-dos-veces">Los dos fondos, escritos dos veces</h2>
+<p><code>0x9853</code> y <code>0x9A46</code> hacen lo mismo con los números cambiados: los cuatro píxeles de palo, el larguero, el gol y el saque que sale de ahí. <b>La red está en el píxel <code>0x12</code> y en el <code>0x267</code></b>: ahí se clava la pelota, con el sonido <code>0x47</code>, y de paso se le recorta la altura para que no se salga por encima del palo. El larguero devuelve <b>media velocidad</b> —<code>0x98A7</code> niega y divide entre dos— y el poste sólo le cambia el signo al desvío.</p>
+<h2 id="las-quince-zonas-del-campo">Las quince zonas del campo</h2>
+<p><code>0xA219</code> parte el terreno en cinco franjas a lo ancho —los cortes están en <code>0xD0</code>, <code>0x100</code>, <code>0x180</code> y <code>0x1B0</code>— por tres a lo alto —<code>0x49</code> y <code>0x78</code>— según dónde esté la pelota, y deja el número en <code>(0xE52B)</code>. La formación del equipo se saca de la tabla de <code>0xA880</code> con ese número: <b>5 × 3 × 12 bytes × 2 equipos son los 360 bytes justos</b> que ocupa la tabla. La formación cambia según por dónde ande el balón.</p>
+<h2 id="la-maquina-pulsa-el-mando">La máquina pulsa el mando</h2>
+<p>Ni el guion de la demostración (<code>0x5965</code>), ni la inteligencia del penalti (<code>0x6907</code>), ni la del partido mueven nada a mano: <b>escriben en el mismo byte de mando que leería un humano</b>. Y el azar sale de los bits bajos del contador de cuadros, <code>(0xE003)</code>.</p>
+<h2 id="la-misma-tecla-es-pase-y-tiro">La misma tecla es pase y tiro</h2>
+<p>Soltarla es pase al compañero. Mantenerla <b>catorce cuadros</b> (<code>0x946C</code>) la convierte en tiro, y entonces el objetivo deja de ser un jugador y pasa a ser una portería: el píxel 15 o el 624 de los 640 del campo.</p>
+<h2 id="codigo-muerto-y-tres-rarezas">Código muerto, y tres rarezas</h2>
+<ul><li><b>Los trozos de <code>0xAAEE</code> y <code>0xAAFA</code> no se ejecutan nunca.</b> Sólo corren si <code>(0xE545)</code> vale 1, y <code>(0xE545)</code> aparece <b>una</b> vez en los 32 KB, que es una lectura. Además <code>0x5648</code> borra <code>0xE100</code>-<code>0xE5FF</code> al montar cada jugada.</li><li><b>Un salto a mitad de instrucción.</b> <code>0xAEAF</code> trae <code>28 01</code> —un <code>jr z,+1</code>— y aterriza en <code>0xAEB2</code>, que no es una instrucción sino el operando del <code>ld l,0C0h</code> de <code>0xAEB1</code>. Ese <code>0xC0</code> suelto se ejecuta como <code>ret nz</code>, y como a <code>0xAEB2</code> sólo se llega con Z, nunca retorna. Es la única etiqueta del cartucho que no cae en posición emitida. No ahorra ni un byte ni un ciclo, así que es rareza y no truco.</li><li><b>Dos escrituras muertas a la propia ROM</b>: <code>0x4028</code> escribe en <code>(0x410A)</code> y <code>0x4056</code> en <code>(0x4116)</code>. Los bytes no cambian, claro.</li><li><b>Una lectura muerta y un <code>jr</code> que no salta</b>: el <code>ld a,(0e003h)</code> de <code>0xB97D</code> no lo mira nadie —<code>0xB9AE</code> machaca A en sus tres caminos— y el <code>jr</code> de <code>0xB9A5</code> va a <code>0xB9A7</code>, que es la instrucción siguiente.</li></ul>
+<footer><p><em>Konami's Soccer</em> lo publico Konami para MSX en 1985; su numero de catalogo es RC-732 y son 32 KB. Todos los derechos sobre el juego siguen siendo de sus titulares. Este trabajo es de preservacion, estudio y documentacion, y la imagen del cartucho no se distribuye.</p></footer></div>

@@ -1,0 +1,108 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Open questions — Konami&#x27;s Soccer (Konami, 1985)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html">The game</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html">Findings</a><a href="IN-THE-EMULATOR.html">In the emulator</a><a href="OPEN-QUESTIONS.html" style=color:var(--tinta)>Open questions</a><a href="es/PREGUNTAS-ABIERTAS.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
+<h1 id="open-questions">Open questions</h1>
+<p>What is <b>not</b> known, said plainly. All 32,768 bytes are accounted for and the listing reproduces the ROM byte for byte, but that does not mean everything makes sense.</p>
+<h2 id="the-twenty-seven-push-hl-ret">The twenty-seven <code>push hl / ret</code></h2>
+<p>The dispatcher at <code>0xB2DA</code> is a <code>push bc / ret</code>, a hand-written <code>jp (bc)</code>, and it hid 283 bytes of code. It is the only <code>push bc / ret</code> in the cartridge, but there are <b>twenty-seven</b> <code>push hl / ret</code>, and they have not been gone through one by one. Most will be hand-pushed returns —there are a few, and they are commented— but if one of them hides another indirect jump, there is coverage to be won there.</p>
+<h2 id="four-variables-without-a-name">Four variables without a name</h2>
+<ul><li><code>(0xE551)</code> — it is cleared in every sub-state other than 1, and cleared again when the ball is taken. Who sets it has not been seen.</li><li><code>(0xE566)</code> and <code>(0xE567)</code> — the listing calls them &quot;the bounce latches&quot; because they are cleared together before a tackle, but exactly what they count is not settled.</li><li><code>(0xE546)</code> is known: it marks that the ball bounced off someone instead of being controlled, and it is what drops an offside call. It is set at <code>0xAA63</code> and cleared at <code>0xAAB8</code>.</li></ul>
+<h2 id="why-the-ball-is-given-a-heading">Why the ball is given a heading</h2>
+<p>When the ball is taken, <code>0xAAC2</code> looks at the mode of whoever took it: if he was walking, <code>(0xE53A)</code> is set to <b>3</b>; if he was standing still, to <b>0</b>. That 3 has not been explained. Why that value in particular, and what difference it makes afterwards, is still open.</p>
+<h2 id="the-two-human-delay-table-is-faster">The two-human delay table is faster</h2>
+<p><code>0xA85E</code> holds two five-byte tables indexed by the level:</p>
+<pre><code>10 0E 0C 0A 08     and     0B 0A 08 06 04</code></pre>
+<p>The first is the one for playing the machine; the second comes out with two players. The reaction frames in the second are <b>smaller</b>, that is, the pieces nobody is holding react faster when there are two humans. There is logic to that —the twelve are shared between two pads, and none of them is &quot;the machine&#x27;s&quot;— but it has not been checked against the game.</p>
+<h2 id="pairing-at-five-apart">Pairing at five apart</h2>
+<p><code>0xABCE</code> decides whether a tackle works by comparing headings. Besides the head-on case, it accepts them being <b>five apart</b>: with headings numbered 1 to 8, the natural figure would be four —the opposite— and five pairs 1 with 6, 2 with 7 and 3 with 8. It could be a deliberate tolerance, or an offset inherited from how the headings are numbered. Not settled.</p>
+<h2 id="an-inc-l-that-may-be-one-too-many">An <code>inc l</code> that may be one too many</h2>
+<p>At <code>0xA741</code> there is an <code>inc l</code> that leaves the pointer on the fine part of the X and not on the height. If it is a bug, the effect would be small and hard to see while playing; if it is not, what is being indexed still needs understanding. Noted here.</p>
+<h2 id="the-seventeen-bytes-of-the-game-master-header">The seventeen bytes of the Game Master header</h2>
+<p>The second &quot;AB&quot; header at <code>0x4010</code> is the <b>Konami Game Master</b>&#x27;s, and that is settled. What is not is the layout of the seventeen bytes behind it, at <code>0x4014</code>. Read as words they give <code>0x6700</code>, <code>0xE000</code> and <code>0xE002</code> —the game&#x27;s two header variables, which fit— and then zeros and a <code>0x05</code>. But <b>that layout is not shared with the other three cartridges</b> that carry the header, so here it stands as a reasoned reading and not as a fact.</p>
+<h2 id="which-of-the-two-teams-is-the-good-one">Which of the two teams is &quot;the good one&quot;</h2>
+<p>Side 0 attacks left and side 1 right; pad 1 drives 0 and pad 2 drives 1. But <b>which of the two is drawn with patches and which with sprites depends on <code>(0xE527)</code></b>, the side the camera follows, that is, the one with the ball. Which means the split <b>changes during the match</b>. What has not been measured is whether that shows while playing —whether the sprite-drawn team flickers more, for instance—.</p>
+<h2 id="the-demo">The demo</h2>
+<p>The demo on the title screen is not a computed match: it is a <b>recorded script</b> (<code>0x5965</code>) that writes into the pad bytes. What has not been extracted is the script itself, nor how long it lasts, nor whether it is always the same match.</p>
+<footer><p><em>Konami's Soccer</em> was published by Konami for the MSX in 1985; its catalogue number is RC-732 and it is 32 KB. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>

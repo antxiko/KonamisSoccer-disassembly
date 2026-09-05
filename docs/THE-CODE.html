@@ -1,0 +1,134 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The code — Konami&#x27;s Soccer (Konami, 1985)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html">The game</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html" style=color:var(--tinta)>The code</a><a href="FINDINGS.html">Findings</a><a href="IN-THE-EMULATOR.html">In the emulator</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/EL-CODIGO.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
+<h1 id="the-code">The code</h1>
+<h2 id="everything-hangs-off-the-interrupt">Everything hangs off the interrupt</h2>
+<p><code>0x4070</code> hooks <code>H.KEYI</code> and then sits still in a <code>jr $</code>. From there on, the whole program is what runs every fiftieth of a second. <code>0x40C8</code> dispatches the scene <code>(0xE000)</code> names with the nine-entry table at <code>0x40E3</code>, and <code>(0xE001)</code> dispatches the step inside it with a chain of <code>djnz</code>.</p>
+<table><tr><th>variable</th><th>what it is</th></tr><tr><td><code>(0xE000)</code></td><td>the scene</td></tr><tr><td><code>(0xE001)</code></td><td>the step within the scene</td></tr><tr><td><code>(0xE003)</code></td><td>the frame counter, which doubles as randomness</td></tr><tr><td><code>(0xE004)</code></td><td>the wait count</td></tr><tr><td><code>(0xE005)</code></td><td>the reentrancy lock</td></tr></table>
+<h2 id="the-dispatcher-with-the-table-right-behind">The dispatcher with the table right behind</h2>
+<p>Almost the whole program is a state machine, and the mechanism repeats thirteen times: a <code>call 0x4066</code> with the pointer table <b>stuck right behind the <code>call</code></b>. The routine takes the return address off the stack, uses it as the base of the table, indexes with A and jumps.</p>
+<p>How many entries each table has is written nowhere. It is fixed by a fit: <b>no entry can point inside its own table</b>, so the first one marks where it ends. That fit corrected two that looked like 24 and 29 entries and are 9 and 4.</p>
+<h2 id="the-one-with-the-push-bc-ret">The one with the <code>push bc / ret</code></h2>
+<p>There is a fourteenth dispatcher that looks like none of the others. <code>0xB2CC</code> takes the destination from the table at <code>0xB2DC</code>, pushes it and does <code>push bc / ret</code>: a <code>jp (bc)</code>, which the Z80 does not have, written by hand. To a tracer that is the end of a routine, and behind it sat <b>283 bytes</b> nobody reached.</p>
+<h2 id="the-decompressor">The decompressor</h2>
+<p>Almost all the graphics are compressed, in a one-command-per-byte format that writes straight to VRAM. <code>L_47B7</code> does it:</p>
+<table><tr><th>command</th><th>what it does</th></tr><tr><td><code>0x00</code></td><td>closes the block; it is the <b>only</b> thing marking where it ends</td></tr><tr><td><code>0x01</code>-<code>0x7F</code></td><td>the byte that follows, repeated that many times</td></tr><tr><td><code>0x80</code></td><td>the two bytes that follow are a new VRAM address</td></tr><tr><td><code>0x81</code>-<code>0xFF</code></td><td>copies the next (command <code>&amp; 0x7F</code>) bytes as they are</td></tr></table>
+<p>Since the size is written nowhere, <b>running the decompressor is the only honest way to know where each block ends</b>. That is what <code>tools/rle.py</code> does, and it is where the limits of the 125 declared data ranges come from.</p>
+<p>On top of that format there are two additions, and both save ROM:</p>
+<ul><li><b>The mirror.</b> <code>L_4836</code> reads each byte and, if bit 0 of C is set, <code>L_483B</code> puts it out with its eight bits reversed, which in SCREEN 2 is reflecting the pattern. There are two doors, <code>L_47DE</code> with C=0 and <code>L_47E2</code> with C=1, and both fall into the same loop. The same compressed block does both halves of a symmetric drawing.</li><li><b>The recolouring.</b> <code>L_4707</code> is the same loop passing each byte through <code>0x4846</code>, which swaps the two nibbles of the colour byte for a five-entry palette in RAM. The same block paints both kits.</li></ul>
+<p>The dumping doors, all in the same stretch:</p>
+<table><tr><th>address</th><th>what it does</th></tr><tr><td><code>0x4680</code></td><td>LDIRVM, an uncompressed block</td></tr><tr><td><code>0x4684</code></td><td>FILVRM</td></tr><tr><td><code>0x4687</code></td><td>FILVRM in all three thirds</td></tr><tr><td><code>0x4698</code></td><td>decompresses into all three thirds</td></tr><tr><td><code>0x46A8</code></td><td>the same, mirrored</td></tr><tr><td><code>0x46B8</code></td><td>the same, changing the colour</td></tr><tr><td><code>0x47AF</code></td><td>the destination is in the block&#x27;s first two bytes</td></tr></table>
+<h2 id="the-match-frame">The match frame</h2>
+<p><code>0x5805</code> is what runs on every interrupt while the game is on, and <b>the order matters</b>: each routine relies on what the previous one left.</p>
+<pre><code>the referee and the rules        0x5818
+the three offside sub-scenes     0x581B
+the restart countdown            0x5828
+which zone the ball is in        0x582B
+switching player with the button 0x582E
+who holds which position         0x5831
+the machine picks a team-mate    0x5834
+each pad&#x27;s highlighted player    0x5837
+the player-change beep           0x583A
+the collision sub-state          0x583D
+a frame of the tactics           0x5840
+the two goalkeepers&#x27; logic       0x5843
+everybody faces the ball         0x5846</code></pre>
+<p>And the drawing, afterwards:</p>
+<pre><code>save the side&#x27;s background       0x5882
+stamp the side onto the map      0x5885
+put the other side in sprites    0x5888
+dump the pitch to VRAM           0x588F
+put the background back          0x5892</code></pre>
+<h2 id="the-match-variables">The match variables</h2>
+<table><tr><th>variable</th><th>what it is</th></tr><tr><td><code>(0xE100)</code></td><td>the twelve pieces, 32 bytes each</td></tr><tr><td><code>(0xE280)</code></td><td>the match sub-state</td></tr><tr><td><code>(0xE281)</code></td><td>the ball sub-state</td></tr><tr><td><code>(0xE2A1)</code> <code>(0xE2A5)</code></td><td>the ball&#x27;s height and horizontal position</td></tr><tr><td><code>(0xE2AB)</code></td><td>its vertical speed</td></tr><tr><td><code>(0xE2C1)</code></td><td>where the pitch window sits</td></tr><tr><td><code>(0xE410)</code></td><td>the position list of the twelve pieces</td></tr><tr><td><code>(0xE527)</code></td><td>the side the camera follows</td></tr><tr><td><code>(0xE528)</code></td><td>who has the ball</td></tr><tr><td><code>(0xE52C)</code> <code>(0xE52D)</code></td><td>each pad&#x27;s highlighted player</td></tr><tr><td><code>(0xE533)</code></td><td>which restart is under way, from 1 to 10</td></tr><tr><td><code>(0xE600)</code></td><td>the pitch map, 80 by 23</td></tr></table>
+<p>Inside a piece, the offsets that get used most:</p>
+<table><tr><th>+N</th><th>what it is</th></tr><tr><td>+0x03</td><td>the heading, 1 to 8</td></tr><tr><td>+0x04</td><td>the height</td></tr><tr><td>+0x06 +0x07</td><td>the horizontal position, in 16 bits</td></tr><tr><td>+0x0A +0x0B</td><td>the on-screen position; <code>0xE0</code> in the height means &quot;not visible&quot;</td></tr><tr><td>+0x0C</td><td>the drawing group</td></tr><tr><td>+0x0D</td><td>the drawing within the group; 4 is on the ground</td></tr><tr><td>+0x15</td><td>the piece number, 0 to 11</td></tr><tr><td>+0x16..+0x18</td><td>where it has to go</td></tr><tr><td>+0x1A</td><td>the frames left before it reacts</td></tr></table>
+<h2 id="the-eight-headings">The eight headings</h2>
+<p>They are used at every turn, and always the same way:</p>
+<pre><code>6  7  8
+5  ·  1
+4  3  2</code></pre>
+<p>The first side —pieces 0 to 5— <b>attacks to the left</b> and the second —6 to 11— <b>to the right</b>. It checks out three independent ways: where the receiver of a pass has to be for offside, which way the taker of a free kick faces, and which way he walks while getting into place.</p>
+<footer><p><em>Konami's Soccer</em> was published by Konami for the MSX in 1985; its catalogue number is RC-732 and it is 32 KB. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>

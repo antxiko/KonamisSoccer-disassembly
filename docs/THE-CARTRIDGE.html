@@ -1,0 +1,112 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The cartridge — Konami&#x27;s Soccer (Konami, 1985)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html">The game</a><a href="THE-CARTRIDGE.html" style=color:var(--tinta)>The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html">Findings</a><a href="IN-THE-EMULATOR.html">In the emulator</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/EL-CARTUCHO.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
+<h1 id="the-cartridge">The cartridge</h1>
+<h2 id="the-machine">The machine</h2>
+<p>An MSX1: Z80 at 3.58 MHz, <b>TMS9918</b> VDP, <b>AY-3-8910</b> sound generator, 16 KB of VRAM and 8 KB of RAM. The cartridge brings 32 KB of ROM and carries neither a mapper nor RAM of its own.</p>
+<h2 id="the-two-pages">The two pages</h2>
+<p>At 32 KB the cartridge takes <b>two pages</b> of the memory map, from <code>0x4000</code> to <code>0xBFFF</code>. The working RAM starts at <code>0xE000</code>.</p>
+<table><tr><th>range</th><th>what is there</th></tr><tr><td><code>0x4000</code>-<code>0x4010</code></td><td>the &quot;AB&quot; header and the entry point</td></tr><tr><td><code>0x4010</code>-<code>0x4025</code></td><td>a <b>second &quot;AB&quot; header</b> this cartridge never reads</td></tr><tr><td><code>0x4025</code>-<code>0x4C19</code></td><td>the skeleton: scenes, VDP, VRAM, sound, labels</td></tr><tr><td><code>0x4C19</code>-<code>0x5645</code></td><td>the presentation, the menu and the sound interpreter</td></tr><tr><td><code>0x5645</code>-<code>0x651E</code></td><td>setting up the match, the frame, the clock and the goal</td></tr><tr><td><code>0x651E</code>-<code>0x6BD8</code></td><td>the penalty shoot-out</td></tr><tr><td><code>0x6BD8</code>-<code>0x6D18</code></td><td>the logo scene</td></tr><tr><td><code>0x6D18</code>-<code>0x853E</code></td><td>the graphics and their loaders</td></tr><tr><td><code>0x853E</code>-<code>0x8787</code></td><td>the pitch map, compressed</td></tr><tr><td><code>0x8787</code>-<code>0x9408</code></td><td>the pieces, the ball physics and the aim</td></tr><tr><td><code>0x9408</code>-<code>0xA219</code></td><td>the pass, the shot, the goal lines and the restarts</td></tr><tr><td><code>0xA219</code>-<code>0xB4C3</code></td><td>the tactics and the intelligence</td></tr><tr><td><code>0xB4C3</code>-<code>0xB9F9</code></td><td>offside and the final screen</td></tr><tr><td><code>0xB9F9</code>-<code>0xBFF3</code></td><td>the trajectory and sprite tables</td></tr><tr><td><code>0xBFF3</code>-<code>0xC000</code></td><td>Konami&#x27;s hidden mark</td></tr></table>
+<h2 id="the-header">The header</h2>
+<p>The first four bytes say everything the BIOS needs:</p>
+<pre><code>41 42 70 40    &quot;AB&quot;, and INIT at 0x4070</code></pre>
+<p>The other three entries —STATEMENT, DEVICE and TEXT— are zero, and so are the six reserved bytes. This is a single-entry-point cartridge.</p>
+<p><code>0x4070</code> hooks the interrupt at H.KEYI and settles into the <code>jr $</code> at <code>0x40BE</code>. <b>The whole game hangs off the interrupt</b>: there is no main loop.</p>
+<h2 id="the-second-header-the-one-this-cartridge-does-not-read">The second header, the one this cartridge does not read</h2>
+<p>At <code>0x4010</code> there is another &quot;AB&quot;, with the <code>0x07</code> of RC-7xx and the <code>0x32</code> of RC-732 inside. Nothing here reads it. It is the header of the <b>Konami Game Master</b>, the cheat cartridge that plugs into the other slot and looks there for the addresses it may touch. Only four of Konami&#x27;s cartridges carry it.</p>
+<h2 id="the-vram-the-wrong-way-round">The VRAM, the wrong way round</h2>
+<p>The eight VDP registers come from the table at <code>0x4889</code>, and they are</p>
+<pre><code>02 E2 0E 7F 07 76 03 E4</code></pre>
+<table><tr><th>register</th><th>value</th><th>what it sets</th></tr><tr><td>R0</td><td>0x02</td><td>SCREEN 2</td></tr><tr><td>R1</td><td>0xE2</td><td>16K, screen on, interrupt, <b>16x16 sprites</b></td></tr><tr><td>R2</td><td>0x0E</td><td>NAME table at <code>0x3800</code></td></tr><tr><td>R3</td><td>0x7F</td><td>COLOUR table at <b><code>0x0000</code></b></td></tr><tr><td>R4</td><td>0x07</td><td>PATTERN table at <b><code>0x2000</code></b></td></tr><tr><td>R5</td><td>0x76</td><td>sprite ATTRIBUTES at <code>0x3B00</code></td></tr><tr><td>R6</td><td>0x03</td><td>sprite PATTERNS at <code>0x1800</code></td></tr><tr><td>R7</td><td>0xE4</td><td>border and backdrop</td></tr></table>
+<p>R3 and R4 are not addresses: they are <b>base and mask</b>. Here they leave the COLOUR table low and the PATTERNS high, exactly the opposite of the usual layout. From that comes a rule that holds for all ten graphics batches: <b>the colour of a pattern dump sits <code>0x2000</code> bytes lower, at the same address</b>. The patterns at <code>0x2828</code> have their colour at <code>0x0828</code>, the ones at <code>0x2998</code> at <code>0x0998</code>, and so on.</p>
+<p>R7 changes with the scene: <code>0xE4</code> at start-up and <code>0x00</code> during the match, so the pitch&#x27;s backdrop is <b>black</b>, not blue.</p>
+<h2 id="the-sound">The sound</h2>
+<p>An interpreter of its own at <code>0x4E50</code>, with <b>54 sequences</b> pointed at by the table at <code>0x50DA</code>. The tones come from twelve bytes at <code>0x50CE</code>, one per semitone, and the octave is got by shifting left.</p>
+<h2 id="konami-s-hidden-mark">Konami&#x27;s hidden mark</h2>
+<p>The last thirteen bytes of the cartridge, from <code>0xBFF3</code> to <code>0xBFFF</code>:</p>
+<pre><code>... 0A 32 AA</code></pre>
+<p>Ten bytes with the title in katakana —コナミのサッカー— written backwards, its length (<code>0x0A</code>), the <b><code>0x32</code> of RC-732</b> and the closing <code>0xAA</code>.</p>
+<p>That this mark exists and what shape it has was discovered by <b>Manuel Pazos</b>, and this comes from him: all that was done here was checking that this cartridge carries it and that the number inside is its own.</p>
+<footer><p><em>Konami's Soccer</em> was published by Konami for the MSX in 1985; its catalogue number is RC-732 and it is 32 KB. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>

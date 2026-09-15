@@ -29,6 +29,27 @@ nearly two seconds—, wait for the button, and twenty frames of walking. With a
 nice touch: **when the machine is the one taking it, the wait is halved**
 —`0x40` frames instead of `0x80`— because nobody is going to press anything.
 
+## The cartridge defends itself: copy protection
+
+Two instructions in the start-up write inside the cartridge itself:
+
+- **0x4028** puts a `pop hl` and a `ret` over the `djnz` at 0x410A.
+  It loads `0xC9E1` into HL and drops it in one go: in memory those two
+  bytes are `E1 C9`, which read as `pop hl` and `ret`.
+- **0x4056** leaves a zero at 0x4116, which is not data: it is the operand of
+  the `jp` at 0x4115. In memory that turns it into `jp 00000h`, a dead reset.
+
+**Neither of them does anything here.** The cartridge runs from ROM, and ROM takes no
+writes: that is why they look like dead code. They are not. A pirated cartridge is a
+copy loaded into **RAM**, and there the write does land and breaks the game.
+Doing nothing on the original is exactly the point.
+
+This is no one-off idea in this cartridge: the same pair —a write over a `djnz`
+and another over the operand of a `jp`— turns up in ten cartridges of this
+series, always in the same two start-up routines. **Manuel Pazos** identified
+them in his disassembly of RC-727, where he named them `ReadKeys_AC` and
+`VRAM_writeAC`.
+
 ## Six players are tiles and six are sprites
 
 An MSX1 shows only four sprites per scanline. With twelve players and two

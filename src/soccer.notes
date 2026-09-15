@@ -381,6 +381,8 @@ F 0x8fee w
 D 0x4010 0x4014 cabecera_del_game_master  "AB", el 0x07 de RC-7xx y el 0x32 de RC-732; la lee el Konami Game Master desde la otra ranura, no este cartucho. Solo cuatro de las 46 ROM de la coleccion la llevan
 F 0x4010 1
 D 0x4014 0x4025 punteros_del_game_master  diecisiete bytes que en este cartucho se leen como 0x6700, 0xE000 y 0xE002 -las dos variables de cabecera del juego- y luego ceros y un 0x05. El reparto NO es comun a los otros tres cartuchos que llevan la cabecera, asi que queda como lectura razonada
+C 0x4025 0xC9E1 son, puestos en memoria, los bytes E1 C9: `pop hl` / `ret`
+C 0x4028 PROTECCION ANTICOPIA: los bytes 0xE1 0xC9 son `pop hl` y `ret`, y van encima del `djnz` de 0x410A. Desde ROM la escritura NO llega -la ROM no admite escritura- y por eso parece codigo muerto; en una copia cargada en RAM si cuela, y la cadena de la presentacion se corta ahi. Manuel Pazos la identifico en el RC-727, donde esta escrita byte a byte, como ReadKeys_AC
 F 0x4014 w
 
 # ======================================================================
@@ -534,7 +536,8 @@ C 0x4049 segunda lectura del estado del VDP
 C 0x404c el bit 7 es el aviso de interrupcion
 C 0x404e si estaba puesto, otra pasada de sonido
 L 0x4053 pone_registro_del_vdp  escribe un registro del VDP, y de paso borra su copia
-C 0x4056 0x4116 cae dentro de la propia ROM, o sea que esta escritura no llega a ninguna parte
+C 0x4053 HL a cero: es lo que va a escribir la linea siguiente
+C 0x4056 LA OTRA PROTECCION ANTICOPIA: el cero cae en 0x4116, que no es un dato sino el operando del `jp` de 0x4115. Desde ROM no llega; en RAM ese salto se queda en `jp 00000h`, o sea un reinicio en seco. Es la pareja de la de 0x4028, y en el RC-727 son VRAM_writeAC y ReadKeys_AC
 C 0x4059 WRTVDP con lo que traiga BC
 B 0x405c ===== Las dos sumas de 8 sobre 16 bits =====
 L 0x405c suma_a_hl  HL = HL + A, con el acarreo a mano

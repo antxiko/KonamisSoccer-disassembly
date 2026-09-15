@@ -28,6 +28,27 @@ casi dos segundos—, esperar el botón, y veinte cuadros andando. Con un detall
 bonito: **cuando el que saca es la máquina, la espera se acorta a la mitad**
 —`0x40` cuadros en vez de `0x80`—, porque nadie va a pulsar nada.
 
+## El cartucho se defiende: protección anticopia
+
+Dos instrucciones del arranque escriben dentro del propio cartucho:
+
+- **0x4028** deja un `pop hl` y un `ret` encima del `djnz` de 0x410A.
+  Carga `0xC9E1` en HL y lo suelta de golpe: en memoria esos dos bytes
+  son `E1 C9`, que se leen como `pop hl` y `ret`.
+- **0x4056** deja un cero en 0x4116, que no es un dato: es el operando del `jp`
+  de 0x4115. En memoria eso lo convierte en `jp 00000h`, un reinicio en seco.
+
+**Ninguna de las dos hace nada aquí.** El cartucho corre desde ROM, y la ROM no admite
+escritura: por eso parecen código muerto. No lo son. Un cartucho pirateado es una
+copia cargada en **RAM**, y ahí la escritura sí cuela y rompe el juego. Que no
+haga nada en el original es justo la gracia.
+
+No es una idea suelta de este cartucho: el mismo par —una escritura sobre un
+`djnz` y otra sobre el operando de un `jp`— aparece en diez cartuchos de esta
+serie, siempre en las mismas dos rutinas del arranque. Las identificó **Manuel
+Pazos** en su desensamblado del RC-727, donde las llamó `ReadKeys_AC` y
+`VRAM_writeAC`.
+
 ## Seis jugadores son casillas y seis son sprites
 
 Un MSX1 sólo saca cuatro sprites por línea. Con doce jugadores y dos porteros

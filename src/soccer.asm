@@ -61,8 +61,8 @@ DATA_punteros_del_game_master:
 
 
 L_4025:
-	ld hl,0c9e1h		;4025
-	ld (0410ah),hl		;4028
+	ld hl,0c9e1h		;4025   ; 0xC9E1 son, puestos en memoria, los bytes E1 C9: `pop hl` / `ret`
+	ld (0410ah),hl		;4028   ; PROTECCION ANTICOPIA: los bytes 0xE1 0xC9 son `pop hl` y `ret`, y van encima del `djnz` de 0x410A. Desde ROM la escritura NO llega -la ROM no admite escritura- y por eso parece codigo muerto; en una copia cargada en RAM si cuela, y la cadena de la presentacion se corta ahi. Manuel Pazos la identifico en el RC-727, donde esta escrita byte a byte, como ReadKeys_AC
 	jp carga_los_tiles_del_logotipo		;402b
 
 ; ----------------------------------------------------------------------
@@ -89,8 +89,8 @@ L_4049:
 	ei			;4051
 	ret			;4052
 pone_registro_del_vdp:		; escribe un registro del VDP, y de paso borra su copia
-	ld hl,00000h		;4053
-	ld (04116h),hl		;4056   ; 0x4116 cae dentro de la propia ROM, o sea que esta escritura no llega a ninguna parte
+	ld hl,00000h		;4053   ; HL a cero: es lo que va a escribir la linea siguiente
+	ld (04116h),hl		;4056   ; LA OTRA PROTECCION ANTICOPIA: el cero cae en 0x4116, que no es un dato sino el operando del `jp` de 0x4115. Desde ROM no llega; en RAM ese salto se queda en `jp 00000h`, o sea un reinicio en seco. Es la pareja de la de 0x4028, y en el RC-727 son VRAM_writeAC y ReadKeys_AC
 	jp 00047h		;4059   ; BIOS WRTVDP - Writes data in the VDP-register | WRTVDP con lo que traiga BC
 
 ; ----------------------------------------------------------------------

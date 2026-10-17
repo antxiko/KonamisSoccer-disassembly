@@ -23,7 +23,7 @@ proc opcion {nombre porDefecto} {
     return $porDefecto
 }
 
-set ::SALIDA [opcion SO_SALIDA {C:/Users/Antxiko/Documents/DES_ASM/SOCCER_DISAM/work/omsx}]
+set ::SALIDA [opcion SO_SALIDA {C:/Users/Antxiko/Documents/DES_ASM/desensamblados/SOCCER_DISAM/work/omsx}]
 file mkdir $::SALIDA
 set ::n 0
 

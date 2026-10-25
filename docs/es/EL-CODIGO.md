@@ -144,3 +144,30 @@ El primer bando —las fichas 0 a 5— **ataca a la izquierda** y el segundo —
 6 a 11— **a la derecha**. Se comprueba por tres caminos: por dónde tiene que
 estar el que recibe un pase para que sea fuera de juego, hacia dónde mira el
 que saca una falta, y hacia dónde camina mientras se coloca.
+
+## Código compartido con otros cartuchos de Konami
+
+Este desensamblado se ha comparado, instrucción por instrucción, con
+todos los demás de Konami de la serie. Cuenta un bloque cuando las
+mismas instrucciones, al menos seis desde una etiqueta hasta su `ret`
+o su salto sin condición, están en los dos cartuchos; las direcciones
+no se miran, porque cambian de un cartucho a otro. De los otros 57,
+**52** tienen al menos un bloque en común con este; estos son los
+que más comparten:
+
+| Cartucho | Bloques | Instrucciones | Por ejemplo (aquí = allí) |
+|---|---:|---:|---|
+| [Knightmare](https://antxiko.github.io/Knightmare-disassembly/es/) | 26 | 305 | `lee_el_mando_1` (0x48B9) = `lee_mando_y_teclado` |
+| [Yie Ar Kung-Fu II](https://antxiko.github.io/YieArKungFu2-disassembly/es/) | 25 | 276 | `latido` (0x402E) = `cada_cuadro` |
+| [The Goonies](https://antxiko.github.io/Goonies-disassembly/es/) | 24 | 301 | `lee_el_mando_1` (0x48B9) = `lee_mando_y_teclado` |
+| [Hyper Sports 3](https://antxiko.github.io/HyperSports3-disassembly/es/) | 23 | 232 | `escribe_un_rotulo` (0x46CE) = `pinta_guion_de_tiles` |
+| [Nemesis / Gradius](https://antxiko.github.io/Nemesis-disassembly/es/) | 22 | 209 | `escribe_un_rotulo` (0x46CE) = `escribe_caracteres` |
+| [Road Fighter](https://antxiko.github.io/RoadFighter-disassembly/es/) | 22 | 272 | `lee_el_mando_1` (0x48B9) = `lee_el_mando` |
+| [Hyper Rally](https://antxiko.github.io/HyperRally-disassembly/es/) | 20 | 262 | `lee_el_mando_1` (0x48B9) = `LEE_MANDOS` |
+| [Konami's Ping Pong](https://antxiko.github.io/KonamisPingPong-disassembly/es/) | 20 | 221 | `escribe_un_rotulo` (0x46CE) = `pinta_rotulo` |
+| [King's Valley](https://antxiko.github.io/KingsValley-disassembly/es/) | 17 | 212 | `escribe_el_periodo_y_el_volumen` (0x4FDE) = `tono_con_periodo_explicito` |
+| [Pippols](https://antxiko.github.io/Pippols-disassembly/es/) | 16 | 176 | `escribe_el_periodo_y_el_volumen` (0x4FDE) = `PISTA_NOTA` |
+
+La matriz entera, los 58 cartuchos entre sí, está en
+[Las rutinas](https://antxiko.github.io/MSX-disassembly-database/es/LAS-RUTINAS.html) de la base de datos de la
+serie, con el método y el programa que la mide.

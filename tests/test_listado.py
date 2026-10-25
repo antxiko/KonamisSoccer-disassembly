@@ -42,6 +42,18 @@ OTROS_JUEGOS = (
     "Descubrimiento", "War in Middle Earth", "Ping Pong",
 )
 
+# La seccion del codigo compartido con los otros Konami de la serie los
+# nombra a proposito: la escribe pon_en_webs.py, de MSX-disassembly-database.
+_COMPARTIDO = re.compile(
+    r"(?:^## |<h2[^>]*>)(?:Code shared with other Konami cartridges|"
+    r"C\u00f3digo compartido con otros cartuchos de Konami)"
+    r".*?(?=^## |<h2|</main>|<footer|\Z)", re.S | re.M)
+
+
+def sin_compartido(texto):
+    """El texto sin la seccion del codigo compartido."""
+    return _COMPARTIDO.sub("", texto)
+
 
 def lee(ruta):
     with open(ruta, encoding="utf-8") as f:
@@ -719,6 +731,7 @@ class TestWeb(unittest.TestCase):
         excepciones = ("Ping Pong", "Road Fighter")
         malas = []
         for ruta, texto in self.paginas.items():
+            texto = sin_compartido(texto)
             base = os.path.basename(ruta)
             for juego in OTROS_JUEGOS:
                 if juego not in texto:

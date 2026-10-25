@@ -143,3 +143,30 @@ The first side —pieces 0 to 5— **attacks to the left** and the second —6 t
 11— **to the right**. It checks out three independent ways: where the receiver
 of a pass has to be for offside, which way the taker of a free kick faces, and
 which way he walks while getting into place.
+
+## Code shared with other Konami cartridges
+
+This disassembly has been compared, instruction by instruction, with
+every other Konami one in the series. A block counts when the same
+instructions, at least six of them from a label to its `ret` or its
+unconditional jump, are in both cartridges; the addresses are left
+aside, because they change from one cartridge to the next. Of the
+other 57, **52** have at least one block in common with this one;
+these are the ones that share the most:
+
+| Cartridge | Blocks | Instructions | For example (here = there) |
+|---|---:|---:|---|
+| [Knightmare](https://antxiko.github.io/Knightmare-disassembly/) | 26 | 305 | `lee_el_mando_1` (0x48B9) = `lee_mando_y_teclado` |
+| [Yie Ar Kung-Fu II](https://antxiko.github.io/YieArKungFu2-disassembly/) | 25 | 276 | `latido` (0x402E) = `cada_cuadro` |
+| [The Goonies](https://antxiko.github.io/Goonies-disassembly/) | 24 | 301 | `lee_el_mando_1` (0x48B9) = `lee_mando_y_teclado` |
+| [Hyper Sports 3](https://antxiko.github.io/HyperSports3-disassembly/) | 23 | 232 | `escribe_un_rotulo` (0x46CE) = `pinta_guion_de_tiles` |
+| [Nemesis / Gradius](https://antxiko.github.io/Nemesis-disassembly/) | 22 | 209 | `escribe_un_rotulo` (0x46CE) = `escribe_caracteres` |
+| [Road Fighter](https://antxiko.github.io/RoadFighter-disassembly/) | 22 | 272 | `lee_el_mando_1` (0x48B9) = `lee_el_mando` |
+| [Hyper Rally](https://antxiko.github.io/HyperRally-disassembly/) | 20 | 262 | `lee_el_mando_1` (0x48B9) = `LEE_MANDOS` |
+| [Konami's Ping Pong](https://antxiko.github.io/KonamisPingPong-disassembly/) | 20 | 221 | `escribe_un_rotulo` (0x46CE) = `pinta_rotulo` |
+| [King's Valley](https://antxiko.github.io/KingsValley-disassembly/) | 17 | 212 | `escribe_el_periodo_y_el_volumen` (0x4FDE) = `tono_con_periodo_explicito` |
+| [Pippols](https://antxiko.github.io/Pippols-disassembly/) | 16 | 176 | `escribe_el_periodo_y_el_volumen` (0x4FDE) = `PISTA_NOTA` |
+
+The whole matrix, the 58 cartridges against each other, is on
+[The routines](https://antxiko.github.io/MSX-disassembly-database/THE-ROUTINES.html) in the series database, along
+with the method and the program that measures it.
